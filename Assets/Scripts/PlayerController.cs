@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour
     private float speed = 8f;
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
+    private bool pressJump;
+    private bool releaseJump;
+    public Animator animator;
 
     [SerializeField] private Rigidbody2D rigidbody;
     [SerializeField] private Transform groundCheck;
@@ -15,18 +18,22 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        pressJump = Input.GetButtonDown("Jump");
+        releaseJump = Input.GetButtonUp("Jump");
         horizontal = Input.GetAxisRaw("Horizontal");
-
-        // If player is on ground and press jump, he jumps
-        if(Input.GetButtonDown("Jump") && IsGrounded())
+        animator.SetFloat("Speed", Mathf.Abs(horizontal));                  // Mathf.Abs makes sure, that the horizontal value is always positive
+        
+        if(Input.GetButtonDown("Jump") && IsGrounded())                     // If player is on ground and press jump, he jumps
         {
             print("jump");
+            pressJump = true;
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpingPower);
+            animator.SetBool("isJumping", true);
         }
 
-        // Control of jump height
-        if(Input.GetButtonUp("Jump") && rigidbody.velocity.y > 0f)
+        if(Input.GetButtonUp("Jump") && rigidbody.velocity.y > 0f)          // Control of jump height
         {
+            releaseJump = true;
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y * 0.5f);
         }
 
@@ -35,12 +42,25 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if(pressJump)
+        {
+            print("Space down");
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpingPower);
+            animator.SetBool("isJumping", true);
+        }
+        if(releaseJump)
+        {
+            print("Space up");
+            rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y * 0.5f);
+        }
+
         rigidbody.velocity = new Vector2(horizontal * speed, rigidbody.velocity.y);
     }
 
     private bool IsGrounded()
     {
         // Invisible circle around player, which collides with ground
+        print("Player is on ground");
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
