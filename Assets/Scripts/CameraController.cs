@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        // Updates the position of the camera every frame, it changes only in x-achse
+        // Updates the position of the camera every frame
         transform.position = new Vector3(player.transform.position.x, transform.position.y, transform.position.z);                            
     }
 }
