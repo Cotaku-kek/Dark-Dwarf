@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     private bool pressJump;
     private bool releaseJump;
+
     public Animator animator;
 
     [SerializeField] private Rigidbody2D rigidbody;
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         animator.SetFloat("Speed", Mathf.Abs(horizontal));                  // Mathf.Abs makes sure, that the horizontal value is always positive
         
-        if(Input.GetButtonDown("Jump") && IsGrounded())                     // If player is on ground and press jump, he jumps
+        if(pressJump && IsGrounded())                     // If player is on ground and press jump, he jumps
         {
             print("jump");
             pressJump = true;
@@ -31,10 +32,12 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("isJumping", true);
         }
 
-        if(Input.GetButtonUp("Jump") && rigidbody.velocity.y > 0f)          // Control of jump height
+        if(releaseJump)          // Control of jump height
         {
+            print("release");
             releaseJump = true;
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y * 0.5f);
+            animator.SetBool("isJumping", false);           // temporaer
         }
 
         Flip();
@@ -42,25 +45,12 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(pressJump)
-        {
-            print("Space down");
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpingPower);
-            animator.SetBool("isJumping", true);
-        }
-        if(releaseJump)
-        {
-            print("Space up");
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y * 0.5f);
-        }
-
         rigidbody.velocity = new Vector2(horizontal * speed, rigidbody.velocity.y);
     }
 
     private bool IsGrounded()
     {
         // Invisible circle around player, which collides with ground
-        print("Player is on ground");
         return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
