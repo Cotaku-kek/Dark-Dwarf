@@ -1,51 +1,64 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     private float horizontal;
-    private float speed = 8f;
-    private float jumpingPower = 16f;
     private bool isFacingRight = true;
-    private bool pressJump;
-    private bool releaseJump;
-
+    private float movementSpeed = 50f;
+    private float jumpHeight = 15f;
+    private Rigidbody2D rigidbody;
+    private PlayerInput playerInput;
+    private PlayerInputActions playerInputActions;
     public Animator animator;
 
-    [SerializeField] private Rigidbody2D rigidbody;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
+    void Awake()
+    {
+        rigidbody = GetComponent<Rigidbody2D>();
+        playerInput = GetComponent<PlayerInput>();
+        GetPlayerInputActions();
+    }
+
     void Update()
     {
-        pressJump = Input.GetButtonDown("Jump");
-        releaseJump = Input.GetButtonUp("Jump");
+        Flip();
+        Movement();
         horizontal = Input.GetAxisRaw("Horizontal");
-        animator.SetFloat("Speed", Mathf.Abs(horizontal));                  // Mathf.Abs makes sure, that the horizontal value is always positive
-        
-        if(pressJump && IsGrounded())                     // If player is on ground and press jump, he jumps
+        //animator.SetBool("isJumping", false);                                                     // temporaer
+    }
+
+    void GetPlayerInputActions()
+    {
+        playerInputActions = new PlayerInputActions();                                              // Access to the PlayerInputActions script
+        playerInputActions.Player.Enable();
+        playerInputActions.Player.Jump.performed += Jump;
+    }
+
+    void Movement()
+    {
+        Vector2 inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
+        rigidbody.AddForce(new Vector3(inputVector.x, 0, inputVector.y) * movementSpeed, ForceMode2D.Force);
+    }
+
+    public void Jump(InputAction.CallbackContext context)
+    {
+        if(context.performed && IsGrounded())
         {
-            print("jump");
-            pressJump = true;
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpingPower);
+            print("Jump! " + context.phase);                                                        // Check which phase is active (started, performed or canceled)
+            rigidbody.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);                       
             animator.SetBool("isJumping", true);
         }
-
-        if(releaseJump)          // Control of jump height
-        {
-            print("release");
-            releaseJump = true;
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, rigidbody.velocity.y * 0.5f);
-            animator.SetBool("isJumping", false);           // temporaer
-        }
-
-        Flip();
     }
 
     private void FixedUpdate()
     {
-        rigidbody.velocity = new Vector2(horizontal * speed, rigidbody.velocity.y);
+        rigidbody.velocity = new Vector2(horizontal, rigidbody.velocity.y);                         // Control players speed    
     }
 
     private bool IsGrounded()

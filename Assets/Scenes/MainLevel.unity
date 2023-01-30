@@ -391,7 +391,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 337469310}
-  rigidbody: {fileID: 337469305}
   groundCheck: {fileID: 1632015012}
   groundLayer:
     serializedVersion: 2
@@ -985,7 +984,7 @@ GameObject:
   - component: {fileID: 1669632615}
   - component: {fileID: 1669632617}
   m_Layer: 3
-  m_Name: Vordergrund
+  m_Name: Foreground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
