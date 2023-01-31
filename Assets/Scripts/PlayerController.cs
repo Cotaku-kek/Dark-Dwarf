@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     // Wall Logic
     private bool isWallSliding, isWallJumping;
     private float wallJumpingCounter, wallJumpingDirection; 
-    private float wallJumpingTime = 0.8f, wallJumpingDuration = 0.8f;
+    [SerializeField] float wallJumpingTime = 0.8f, wallJumpingDuration = 0.8f;
     [SerializeField] Vector2 wallJumpingPower = new Vector2(4f, 1f);
     [SerializeField] float wallSlidingSpeed;
 
