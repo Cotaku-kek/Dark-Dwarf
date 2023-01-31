@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-
     public Animator animator;
     private BoxCollider2D boxCollider;
     private Rigidbody2D rigidbody;
@@ -15,24 +14,19 @@ public class PlayerController : MonoBehaviour
 
     private float horizontal;
     private bool isFacingRight = true;
-    private bool isWallSliding;
+
+    // Edge logic
 
     // Wall Logic
-    private bool isWallJumping;
-    private float wallJumpingCounter;
-    private float wallJumpingDirection;
-    private float wallJumpingTime = 0.8f;
-    private float wallJumpingDuration = 0.8f;
+    private bool isWallSliding, isWallJumping;
+    private float wallJumpingCounter, wallJumpingDirection; 
+    private float wallJumpingTime = 0.8f, wallJumpingDuration = 0.8f;
     [SerializeField] Vector2 wallJumpingPower = new Vector2(4f, 1f);
-
-    [SerializeField] float movementSpeed;             
-    [SerializeField] float jumpHeight;                          
     [SerializeField] float wallSlidingSpeed;
 
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private Transform wallCheck;
+    [SerializeField] float movementSpeed, jumpHeight;                                    
+    [SerializeField] private LayerMask groundLayer, wallLayer;
+    [SerializeField] private Transform groundCheck, wallCheck;
 
     void Awake()
     {
@@ -47,7 +41,7 @@ public class PlayerController : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");
         Movement();
         WallSlide();
-        WallJump();
+        WallJump();;
 
         if(!isWallJumping)
         {
