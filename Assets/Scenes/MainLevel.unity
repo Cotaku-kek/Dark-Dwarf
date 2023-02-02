@@ -201,6 +201,7 @@ GameObject:
   m_Component:
   - component: {fileID: 295842063}
   - component: {fileID: 295842064}
+  - component: {fileID: 295842065}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -240,6 +241,18 @@ MonoBehaviour:
   - {fileID: 763417627}
   - {fileID: 1330385341}
   smoothing: 10
+--- !u!114 &295842065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 295842062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63ba68d7599ed1f4c8d66b15069a0de8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &337469303
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,10 +404,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 337469310}
+  wallJumpingTime: 0.8
+  wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}
+  wallSlidingSpeed: 1
   movementSpeed: 50
   jumpHeight: 13
-  wallSlidingSpeed: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
