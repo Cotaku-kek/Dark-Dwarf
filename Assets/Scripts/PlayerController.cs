@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
     private BoxCollider2D boxCollider;
     private Rigidbody2D rigidbody;
-    private PlayerInput playerInput;
     private PlayerInputActions playerInputActions;
 
     private float horizontal;
@@ -31,7 +30,6 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        playerInput = GetComponent<PlayerInput>();
         boxCollider = GetComponent<BoxCollider2D>();
         GetPlayerInputActions();
     }
