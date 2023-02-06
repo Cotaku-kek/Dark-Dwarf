@@ -513,7 +513,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 295842063}
-  - component: {fileID: 295842064}
   - component: {fileID: 295842065}
   - component: {fileID: 295842066}
   m_Layer: 0
@@ -538,23 +537,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &295842064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 295842062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a37c356d1adfc74eab0dab9b4d46969, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backgrounds:
-  - {fileID: 763417627}
-  - {fileID: 1330385341}
-  - {fileID: 1506753514}
-  smoothing: 0.6
 --- !u!114 &295842065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,7 +716,7 @@ Transform:
   - {fileID: 992031282}
   - {fileID: 519420032}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &337469308
 MonoBehaviour:
@@ -964,7 +946,7 @@ Transform:
   - {fileID: 1070313100}
   - {fileID: 8187298281003856044}
   m_Father: {fileID: 1720857211}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &501103755
 GameObject:
@@ -1157,6 +1139,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 558247029}
+  - component: {fileID: 558247030}
   m_Layer: 0
   m_Name: Parallax
   m_TagString: Untagged
@@ -1172,16 +1155,34 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 558247028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.015164, y: 1.95, z: 12.61216}
+  m_LocalPosition: {x: 2.3151855, y: 15.150024, z: 12.426797}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 763417627}
   - {fileID: 1330385341}
   - {fileID: 1506753514}
-  m_Father: {fileID: 1720857211}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &558247030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558247028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a37c356d1adfc74eab0dab9b4d46969, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backgrounds:
+  - {fileID: 763417627}
+  - {fileID: 1330385341}
+  smoothing: 3
+  ground: {fileID: 1506753514}
+  groundSmoothing: 0.6
 --- !u!1 &562198216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1717,7 +1718,7 @@ GameObject:
   m_Component:
   - component: {fileID: 763417627}
   m_Layer: 0
-  m_Name: Background  Sky
+  m_Name: Sky
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2019,7 +2020,7 @@ Transform:
   - {fileID: 1388336866}
   - {fileID: 829667548}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!60 &780047188
 PolygonCollider2D:
@@ -8018,7 +8019,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1330385341}
   m_Layer: 0
-  m_Name: Background Mountain
+  m_Name: Mountain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8136,7 +8137,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1506753514}
   m_Layer: 0
-  m_Name: Background Ground
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8396,10 +8397,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 558247029}
   - {fileID: 425060131}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1744918505
 GameObject:

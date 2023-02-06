@@ -6,7 +6,11 @@ public class Parallaxing : MonoBehaviour
 {
     public Transform[] backgrounds;                                                                                                     // Array (list) for all kind of moving images, backgrounds, foregrounds
     private float[] parallaxScales;                                                                                                     // Proportion of the camera movement
-    public float smoothing = 1f;                                                                                                        // How smooth the parallax is moving
+    public float smoothing;                                                                                                             // How smooth the parallax is moving
+
+    public Transform ground;
+    private float groundScales;
+    public float groundSmoothing;
 
     private Transform camera;                                                                                                           // Reference to the main cameras transform
     private Vector3 previousCamPos;                                                                                                     // Position of the camera in the previous frame
@@ -24,6 +28,9 @@ public class Parallaxing : MonoBehaviour
         for(int i = 0; i < backgrounds.Length; i++) {
             parallaxScales[i] = backgrounds[i].position.z*-1;
         }
+
+        groundScales = new float();                                                                                 // Parallax list is as long as the backgrounds
+        groundScales = ground.position.z*-1;    
     }
 
     void Update()                                                                                                                       // Update is called once per frame
@@ -34,6 +41,11 @@ public class Parallaxing : MonoBehaviour
             Vector3 backgroundTargetPos = new Vector3 (backgroundTargetPosX, backgrounds[i].position.y, backgrounds[i].position.z);
             backgrounds[i].position = Vector3.Lerp (backgrounds[i].position, backgroundTargetPos, smoothing * Time.deltaTime);          // deltaTime converts frames to seconds
         }
+
+        float groundParallax = (previousCamPos.x - camera.position.x) * groundScales;                                                // Parallax is the opposite of the camera position
+        float groundTargetPosX = ground.position.x + groundParallax;
+        Vector3 groundTargetPos = new Vector3 (groundTargetPosX, ground.position.y, ground.position.z);
+        ground.position = Vector3.Lerp (ground.position, groundTargetPos, groundSmoothing * Time.deltaTime);
 
         previousCamPos = camera.position;
     }
