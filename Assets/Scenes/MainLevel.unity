@@ -1180,7 +1180,7 @@ MonoBehaviour:
   backgrounds:
   - {fileID: 763417627}
   - {fileID: 1330385341}
-  smoothing: 3
+  backgroundSmoothing: 2
   ground: {fileID: 1506753514}
   groundSmoothing: 0.6
 --- !u!1 &562198216
