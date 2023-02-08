@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
         {
             FlipImage();
         }
-
+        
         //animator.SetBool("isJumping", false);                                                         // temporaer
 
     }
@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
         {
             print("Jump! " + context.phase);                                                            // Check which phase is active (started, performed or canceled)
             rigidbody.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);                       
-            animator.SetBool("isJumping", true);
+            //animator.SetBool("isJumping", true);                                                      // nicht so viel schwitzender Zwerg - temporaer
         }
     }
 
