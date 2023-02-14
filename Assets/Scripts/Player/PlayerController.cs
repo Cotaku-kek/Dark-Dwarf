@@ -8,11 +8,20 @@ public class PlayerController : MonoBehaviour
 {
     public Animator animator;
     private BoxCollider2D boxCollider;
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D rb2D;
     private PlayerInputActions playerInputActions;
 
     private float horizontal;
     private bool isFacingRight = true;
+
+    //Jump Logic
+    private Vector2 move;
+    private bool jump;
+    private bool isGrounded;
+    private float coyoteTime = 0.1f;
+    private float coyoteCounter;
+    public float jumpBufferLength = 0.05f;
+    private float jumpBufferCount;
 
     // Edge logic
 
@@ -29,7 +38,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rb2D = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         GetPlayerInputActions();
     }
@@ -37,7 +46,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");                                    // Flips the image by moving
-        MovementLogic();
+        MovementInput();
+        OnJump();
         WallSlide();
         WallJump();;
 
@@ -45,39 +55,80 @@ public class PlayerController : MonoBehaviour
         {
             FlipImage();
         }
-        
-        //animator.SetBool("isJumping", false);                                                         // temporaer
-
     }
 
     private void FixedUpdate()
     {
         if(!isWallJumping)
         {
-            rigidbody.velocity = new Vector2(horizontal, rigidbody.velocity.y);                             // Control players speed    
+            rb2D.velocity = new Vector2(horizontal, rb2D.velocity.y);                             // Control players speed    
         }
+
+        MovementOutput();
+        IsGrounded();
     }
 
     void GetPlayerInputActions()
     {
         playerInputActions = new PlayerInputActions();                                                  // Access to the PlayerInputActions script
         playerInputActions.Player.Enable();
-        playerInputActions.Player.Jump.performed += JumpLogic;
+        //playerInputActions.Player.Jump.performed += JumpLogic;
     }
 
-    void MovementLogic()
+    void MovementInput()
     {
-        Vector2 inputVector = playerInputActions.Player.Movement.ReadValue<Vector2>();
-        rigidbody.AddForce(new Vector3(inputVector.x, 0, inputVector.y) * movementSpeed, ForceMode2D.Force);
+        move = playerInputActions.Player.Movement.ReadValue<Vector2>();
     }
 
-    public void JumpLogic(InputAction.CallbackContext context)
+    void MovementOutput()
     {
-        if(context.performed && IsGrounded())
+        rb2D.AddForce(move * movementSpeed * (100 * Time.fixedDeltaTime), ForceMode2D.Force);
+    }
+
+    void OnJump()
+    {
+        jump = playerInputActions.Player.Jump.WasPerformedThisFrame();      //Same as GetButtonDown
+
+        //Jump buffer
+        if(jump)
         {
-            print("Jump! " + context.phase);                                                            // Check which phase is active (started, performed or canceled)
-            rigidbody.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);                       
-            //animator.SetBool("isJumping", true);                                                      // nicht so viel schwitzender Zwerg - temporaer
+            jumpBufferCount = jumpBufferLength;
+        }
+        else
+        {
+            jumpBufferCount -= Time.deltaTime;
+        }
+
+        //Coyote Time
+        if(isGrounded)
+        {
+            coyoteCounter = coyoteTime;
+        }
+        else 
+        {
+            coyoteCounter -= Time.deltaTime;
+        }
+
+        //if Coyote Time and Jump Buffer are true, Jump
+        if(jumpBufferCount >= 0 && coyoteCounter > 0f)
+        {
+            rb2D.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            coyoteCounter = 0;
+            jumpBufferCount = 0;
+        }
+        else if(!isGrounded)
+        {
+            animator.SetBool("isJumping", true);
+        }
+        else if(isGrounded)
+        {
+            animator.SetBool("isJumping", false);
+        }
+
+        //Jump higher if Jump is pressed longer
+        if (playerInputActions.Player.Jump.WasReleasedThisFrame() && rb2D.velocity.y > 0)       //Same as GetButtonUp
+        {
+            rb2D.velocity = new Vector2(rb2D.velocity.x, rb2D.velocity.y * 0.5f);
         }
     }
 
@@ -100,7 +151,7 @@ public class PlayerController : MonoBehaviour
         {
             playerInputActions.Player.Movement.Disable();
             isWallJumping = true;
-            rigidbody.velocity = new Vector2(wallJumpingDirection * wallJumpingPower.x, wallJumpingPower.y);
+            rb2D.velocity = new Vector2(wallJumpingDirection * wallJumpingPower.x, wallJumpingPower.y);
             wallJumpingCounter = 0f;
 
             if(transform.localScale.x != wallJumpingDirection)
@@ -124,10 +175,10 @@ public class PlayerController : MonoBehaviour
 
     void WallSlide()
     {
-        if(OnWall() && !IsGrounded() && horizontal != 0f)
+        if(OnWall() && !isGrounded && horizontal != 0f)
         {
             isWallSliding = true;
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, Mathf.Clamp(rigidbody.velocity.y, -wallSlidingSpeed, float.MaxValue));
+            rb2D.velocity = new Vector2(rb2D.velocity.x, Mathf.Clamp(rb2D.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
         else
         {
@@ -135,9 +186,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool IsGrounded()                                                                           // Check if player is on ground
+    private void IsGrounded()                                                                           // Check if player is on ground
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
     }
 
     private bool OnWall()                                                                               // Check if player is on wall
