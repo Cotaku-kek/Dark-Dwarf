@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     private float horizontal;
     private bool isFacingRight = true;
+    Vector2 lookDirection = new Vector2(1,0);
 
     //Jump Logic
     private Vector2 move;
@@ -22,6 +23,9 @@ public class PlayerController : MonoBehaviour
     private float coyoteCounter;
     public float jumpBufferLength = 0.05f;
     private float jumpBufferCount;
+
+    //Attack Logic
+    private bool attack;
 
     // Edge logic
 
@@ -48,6 +52,7 @@ public class PlayerController : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");                                    // Flips the image by moving
         MovementInput();
         OnJump();
+        OnAttack();
         WallSlide();
         WallJump();;
 
@@ -70,7 +75,7 @@ public class PlayerController : MonoBehaviour
 
     void GetPlayerInputActions()
     {
-        playerInputActions = new PlayerInputActions();                                                  // Access to the PlayerInputActions script
+        playerInputActions = new PlayerInputActions();                                            // Access to the PlayerInputActions script
         playerInputActions.Player.Enable();
         //playerInputActions.Player.Jump.performed += JumpLogic;
     }
@@ -78,11 +83,28 @@ public class PlayerController : MonoBehaviour
     void MovementInput()
     {
         move = playerInputActions.Player.Movement.ReadValue<Vector2>();
+        
+        //Calculate lookDirection for Raycast
+        if (!Mathf.Approximately(move.x, 0.0f))                                                     //Only X because Sidescroller? If needed || !Mathf.Approximately(move.y, 0.0f)
+        {
+            lookDirection.Set(move.x, 0);                                                           //y is 0 because Sidescroller? If needed lookDirection.Set(move.x, move.y)
+            lookDirection.Normalize();
+        }
     }
 
     void MovementOutput()
     {
         rb2D.AddForce(move * movementSpeed * (100 * Time.fixedDeltaTime), ForceMode2D.Force);
+
+        //Animation Stuff
+        if(rb2D.velocity.x > 0 || rb2D.velocity.x < 0)
+        {
+            animator.SetInteger("AnimState", 1);
+        }
+        else
+        {
+            animator.SetInteger("AnimState", 0);
+        }
     }
 
     void OnJump()
@@ -113,22 +135,36 @@ public class PlayerController : MonoBehaviour
         if(jumpBufferCount >= 0 && coyoteCounter > 0f)
         {
             rb2D.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            animator.SetTrigger("Jump");
             coyoteCounter = 0;
             jumpBufferCount = 0;
         }
-        else if(!isGrounded)
-        {
-            animator.SetBool("isJumping", true);
-        }
-        else if(isGrounded)
-        {
-            animator.SetBool("isJumping", false);
-        }
+        
+        animator.SetFloat("AirSpeedY", rb2D.velocity.y);
+        animator.SetBool("Grounded", isGrounded);
 
         //Jump higher if Jump is pressed longer
         if (playerInputActions.Player.Jump.WasReleasedThisFrame() && rb2D.velocity.y > 0)       //Same as GetButtonUp
         {
             rb2D.velocity = new Vector2(rb2D.velocity.x, rb2D.velocity.y * 0.5f);
+        }
+    }
+
+    void OnAttack()
+    {
+        attack = playerInputActions.Player.Attack.WasPressedThisFrame();
+        if(attack)
+        {
+            animator.SetTrigger("Attack1");
+            RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.2f, LayerMask.GetMask("Enemy"));
+            if (hit.collider != null)
+            {
+                CutTree tree = hit.collider.GetComponent<CutTree>();
+                if(tree != null)
+                {
+                    tree.TreeFalling();
+                }
+            }
         }
     }
 
@@ -199,7 +235,7 @@ public class PlayerController : MonoBehaviour
     private void FlipImage()
     {
         // Flip player image to left or right while moving
-        if(isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        if(isFacingRight && rb2D.velocity.x < 0 || !isFacingRight && rb2D.velocity.x > 0)
         {
             isFacingRight = !isFacingRight;
             Vector3 localScale = transform.localScale;

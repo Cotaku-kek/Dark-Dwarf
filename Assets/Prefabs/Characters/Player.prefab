@@ -214,12 +214,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 6507198155380534105}
+  jumpBufferLength: 0.1
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}
   wallSlidingSpeed: 1
-  movementSpeed: 5000
-  jumpHeight: 1000
+  movementSpeed: 7000
+  jumpHeight: 1200
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
