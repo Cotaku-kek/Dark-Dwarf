@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1740310882924193291}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Ground Check
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 1740310884070495273}
   - component: {fileID: 1740310884070495272}
   - component: {fileID: 1740310884070495271}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Knight
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -183,13 +183,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1740310884070495271}
+  maxHealth: 5
+  movementSpeed: 7000
+  jumpHeight: 1500
   jumpBufferLength: 0.1
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}
   wallSlidingSpeed: 1
-  movementSpeed: 7000
-  jumpHeight: 1500
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -255,7 +256,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1740310884812663437}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Wall Check
   m_TagString: Untagged
   m_Icon: {fileID: 0}

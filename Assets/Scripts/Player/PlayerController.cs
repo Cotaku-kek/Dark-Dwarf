@@ -14,6 +14,15 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     Vector2 lookDirection = new Vector2(1,0);
 
+    //Health/Mana
+    public int maxHealth = 5;
+    public int health {get {return currentHealth;}}
+    int currentHealth;
+
+    private bool isInvinsible;
+    private float invinsibleTimer;
+    private float timeInvincible = 2.0f;
+
     //Movement Logic
     private Vector2 moveInput;
     [SerializeField] float movementSpeed;
@@ -47,6 +56,8 @@ public class PlayerController : MonoBehaviour
         rb2D = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         GetPlayerInputActions();
+        
+        currentHealth = maxHealth;
     }
 
     void Update()
@@ -55,7 +66,8 @@ public class PlayerController : MonoBehaviour
         OnJump();
         OnAttack();
         WallSlide();
-        WallJump();;
+        WallJump();
+        Invinsible();
 
         if(!isWallJumping)
         {
@@ -237,6 +249,36 @@ public class PlayerController : MonoBehaviour
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
+        }
+    }
+
+    //Methods regarding Health
+
+    public void ChangeHealth(int amount)
+    {
+        if (amount < 0)
+        {
+            if (isInvinsible)
+            {
+                return;
+            }
+            animator.SetTrigger("Hurt");
+            isInvinsible = true;
+            invinsibleTimer = timeInvincible;
+        }
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        Debug.Log(currentHealth + "/" + maxHealth);
+    }
+
+    private void Invinsible()
+    {
+        if(isInvinsible)
+        {
+            invinsibleTimer -= Time.deltaTime;
+            if (invinsibleTimer < 0)
+            {
+                isInvinsible = false;
+            }
         }
     }
 }
