@@ -11,13 +11,16 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb2D;
     private PlayerInputActions playerInputActions;
 
-    private float horizontal;
     private bool isFacingRight = true;
     Vector2 lookDirection = new Vector2(1,0);
 
+    //Movement Logic
+    private Vector2 moveInput;
+    [SerializeField] float movementSpeed;
+
     //Jump Logic
-    private Vector2 move;
     private bool jump;
+    [SerializeField] float jumpHeight;
     private bool isGrounded;
     private float coyoteTime = 0.1f;
     private float coyoteCounter;
@@ -36,7 +39,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Vector2 wallJumpingPower = new Vector2(4f, 1f);
     [SerializeField] float wallSlidingSpeed;
 
-    [SerializeField] float movementSpeed, jumpHeight;                                    
     [SerializeField] private LayerMask groundLayer, wallLayer;
     [SerializeField] private Transform groundCheck, wallCheck;
 
@@ -49,7 +51,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");                                    // Flips the image by moving
         MovementInput();
         OnJump();
         OnAttack();
@@ -64,11 +65,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!isWallJumping)
-        {
-            rb2D.velocity = new Vector2(horizontal, rb2D.velocity.y);                             // Control players speed    
-        }
-
         MovementOutput();
         IsGrounded();
     }
@@ -82,19 +78,20 @@ public class PlayerController : MonoBehaviour
 
     void MovementInput()
     {
-        move = playerInputActions.Player.Movement.ReadValue<Vector2>();
+        moveInput = playerInputActions.Player.Movement.ReadValue<Vector2>();
         
         //Calculate lookDirection for Raycast
-        if (!Mathf.Approximately(move.x, 0.0f))                                                     //Only X because Sidescroller? If needed || !Mathf.Approximately(move.y, 0.0f)
+        if (!Mathf.Approximately(moveInput.x, 0.0f))                                                     //Only X because Sidescroller? If needed || !Mathf.Approximately(moveInput.y, 0.0f)
         {
-            lookDirection.Set(move.x, 0);                                                           //y is 0 because Sidescroller? If needed lookDirection.Set(move.x, move.y)
+            lookDirection.Set(moveInput.x, 0);                                                           //y is 0 because Sidescroller? If needed lookDirection.Set(moveInput.x, moveInput.y)
             lookDirection.Normalize();
         }
     }
 
     void MovementOutput()
     {
-        rb2D.AddForce(move * movementSpeed * (100 * Time.fixedDeltaTime), ForceMode2D.Force);
+        rb2D.velocity = new Vector2(moveInput.x, rb2D.velocity.y);
+        rb2D.AddForce(moveInput * movementSpeed * (100 * Time.fixedDeltaTime), ForceMode2D.Force);
 
         //Animation Stuff
         if(rb2D.velocity.x > 0 || rb2D.velocity.x < 0)
@@ -200,7 +197,6 @@ public class PlayerController : MonoBehaviour
 
             Invoke(nameof(StopWallJumping), wallJumpingDuration);
         }
-
     }
 
     void StopWallJumping()
@@ -211,7 +207,7 @@ public class PlayerController : MonoBehaviour
 
     void WallSlide()
     {
-        if(OnWall() && !isGrounded && horizontal != 0f)
+        if(OnWall() && !isGrounded && moveInput.x != 0f)
         {
             isWallSliding = true;
             rb2D.velocity = new Vector2(rb2D.velocity.x, Mathf.Clamp(rb2D.velocity.y, -wallSlidingSpeed, float.MaxValue));
@@ -235,7 +231,7 @@ public class PlayerController : MonoBehaviour
     private void FlipImage()
     {
         // Flip player image to left or right while moving
-        if(isFacingRight && rb2D.velocity.x < 0 || !isFacingRight && rb2D.velocity.x > 0)
+        if(lookDirection.x < 0 && isFacingRight || !isFacingRight && lookDirection.x > 0)
         {
             isFacingRight = !isFacingRight;
             Vector3 localScale = transform.localScale;

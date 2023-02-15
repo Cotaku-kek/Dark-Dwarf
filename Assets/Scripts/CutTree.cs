@@ -19,5 +19,6 @@ public class CutTree : MonoBehaviour
     {
         animator.SetTrigger("Cut");
         edgeCollider2D.enabled = !edgeCollider2D.enabled;
+        gameObject.layer = LayerMask.NameToLayer("Ground");
     }
 }
