@@ -187,6 +187,7 @@ MonoBehaviour:
   movementSpeed: 7000
   jumpHeight: 1500
   jumpBufferLength: 0.1
+  attackPower: 2
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}

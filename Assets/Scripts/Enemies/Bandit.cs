@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class Bandit : Enemy
 {
-
-    Rigidbody2D rb2D;
-    Animator animator;
-
     private float direction = -1;
     private float standStill = 1;
 
@@ -18,12 +14,10 @@ public class Bandit : Enemy
 
     [SerializeField] private bool isGrounded = true;
 
+    [SerializeField] Rigidbody2D rb2D;
+    [SerializeField] Animator animator;
+
     // Start is called before the first frame update
-    void Awake()
-    {
-        rb2D = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-    }
 
     void FixedUpdate()
     {
@@ -32,11 +26,24 @@ public class Bandit : Enemy
         Attack();
     }
 
+    void Update()
+    {
+
+    }
+
+
+    protected override void Awake()
+    {
+        base.Awake();
+        rb2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+    }    
+
     protected override void Attack()                                                                // Attack and hit player
     {
         //base.Attack();
 
-        RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, new Vector2(direction,0), 1f, LayerMask.GetMask("Player"));
+        RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, new Vector2(direction,0), attackRange, LayerMask.GetMask("Player"));
         if (hit.collider != null)
         {
             standStill = 0;
@@ -44,8 +51,6 @@ public class Bandit : Enemy
             if(attackCooldown < 0)                                                                  // Cooldown for Animation duration
             {
                 animator.SetTrigger("Attack");
-                PlayerController player = hit.collider.GetComponent<PlayerController>();
-                player.ChangeHealth((int)-damage * 2);
                 attackCooldown = 0.8f;
             }
         }
@@ -53,14 +58,27 @@ public class Bandit : Enemy
             standStill = 1;
     }
 
-    void OnCollisionStay2D(Collision2D other)                                                       // Damage if touch Bad Guy
+    void OnTriggerEnter2D(Collider2D other)                                                       // Damage if touch Bad Guy
     {
         PlayerController player = other.gameObject.GetComponent<PlayerController>();
 
         if (player != null)
         {
-            player.ChangeHealth((int)-damage);
-            Debug.Log("Collided with" + player.name);
+            player.ChangeHealth(-damage);
+            Debug.Log("Collided with " + player.name);
+        }
+    }
+
+    public override void ChangeHealth(float amount)
+    {
+        base.ChangeHealth(amount);
+        animator.SetTrigger("Hurt");
+        Debug.Log(currentHealth + "+" + isDead);
+        if(isDead)
+        {
+            animator.SetTrigger("Death");
+            standStill = 0;
+            rb2D.simulated = false;
         }
     }
 

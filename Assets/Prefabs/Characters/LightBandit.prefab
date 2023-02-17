@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 7293694441427507645}
   - component: {fileID: 7293694441427507644}
   - component: {fileID: 7293694441427507642}
+  - component: {fileID: 851760068}
   m_Layer: 9
   m_Name: LightBandit
   m_TagString: Enemy
@@ -132,14 +133,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23475c50df7ad0a4e949facb0eda848f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1
-  speed: 1
+  maxHealth: 1
+  speed: 1.5
   damage: 1
+  currentHealth: 0
+  isDead: 0
+  attackRange: 0.8
   groundCheck: {fileID: 7293694440788195826}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   isGrounded: 1
+  rb2D: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!50 &7293694441427507645
 Rigidbody2D:
   serializedVersion: 4
@@ -153,7 +159,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 60
-  m_LinearDrag: 0
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -207,3 +213,32 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!60 &851760068
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7293694441427507632}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0}
+    oldSize: {x: 1.5, y: 1.5}
+    newSize: {x: 1.5, y: 1.5}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.45, y: 0.5}
+      - {x: 0.45, y: 1.45}
+      - {x: -0.75, y: 1.45}
+      - {x: -0.75, y: 0.5}

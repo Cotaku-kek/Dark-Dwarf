@@ -15,13 +15,14 @@ public class PlayerController : MonoBehaviour
     Vector2 lookDirection = new Vector2(1,0);
 
     //Health/Mana
-    public int maxHealth = 5;
-    public int health {get {return currentHealth;}}
-    int currentHealth;
+    public float maxHealth = 5;
+    public float health {get {return currentHealth;}}
+    float currentHealth;
+    private bool isDead;
 
     private bool isInvinsible;
     private float invinsibleTimer;
-    private float timeInvincible = 2.0f;
+    private float timeInvincible = 1.5f;
 
     //Movement Logic
     private Vector2 moveInput;
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
 
     //Attack Logic
     private bool attack;
+    public float attackPower;
 
     // Edge logic
 
@@ -173,6 +175,11 @@ public class PlayerController : MonoBehaviour
                 {
                     tree.TreeFalling();
                 }
+                Enemy enemy = hit.collider.GetComponent<Enemy>();
+                if(enemy != null)
+                {
+                    enemy.ChangeHealth(-attackPower);
+                }
             }
         }
     }
@@ -254,7 +261,7 @@ public class PlayerController : MonoBehaviour
 
     //Methods regarding Health
 
-    public void ChangeHealth(int amount)
+    public void ChangeHealth(float amount)
     {
         if (amount < 0)
         {
@@ -265,6 +272,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Hurt");
             isInvinsible = true;
             invinsibleTimer = timeInvincible;
+            isDeath();
         }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);
@@ -279,6 +287,17 @@ public class PlayerController : MonoBehaviour
             {
                 isInvinsible = false;
             }
+        }
+    }
+
+    private void isDeath()
+    {
+        if (currentHealth <= 0)
+        {
+            isDead = true;
+            animator.SetTrigger("Death");
+            playerInputActions.Player.Disable();
+            rb2D.simulated = false;
         }
     }
 }
