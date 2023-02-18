@@ -23,12 +23,11 @@ public class Bandit : Enemy
     {
         IsGrounded();
         PatrolingArea();
-        Attack();
     }
 
     void Update()
     {
-
+        Attack();
     }
 
 
@@ -58,7 +57,7 @@ public class Bandit : Enemy
             standStill = 1;
     }
 
-    void OnTriggerEnter2D(Collider2D other)                                                       // Damage if touch Bad Guy
+    void OnTriggerEnter2D(Collider2D other)                                                       // Damage if hit by Bad Guy
     {
         PlayerController player = other.gameObject.GetComponent<PlayerController>();
 

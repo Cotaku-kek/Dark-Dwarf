@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 3261066817682409596}
   - component: {fileID: 7648773258441372752}
   m_Layer: 0
-  m_Name: PF Village Props - Ladder
+  m_Name: WoodenLadder
   m_TagString: Ladder
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,10 +131,10 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.49915862}
+  m_Offset: {x: 0.013605444, y: 0.25}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -145,7 +145,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 5.005489}
+  m_Size: {x: 0.06860191, y: 5.005489}
   m_EdgeRadius: 0
 --- !u!1 &3261066818917458291
 GameObject:

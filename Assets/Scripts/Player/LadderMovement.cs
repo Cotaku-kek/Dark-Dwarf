@@ -8,61 +8,56 @@ public class LadderMovement : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rb;                                // rb = rigidbody
 
-    private float vertical;                                                 // Player moves vertically
+    private Vector2 vertical;                                                 // Player moves vertically
     private float speed = 8f;                                               // Climbing speed
     private bool isLadder;                                                  // Check if player stands next to a ladder
-    //private bool isClimbing;                                                // Check if player is climbing
+    private bool isClimbing;                                                // Check if player is climbing
     private PlayerInputActions playerInputActions;                          // Access to the PlayerInputActions Script
+    private Rigidbody2D rb2D;
+    private float currentGravity;
 
     void Awake()
     {
         GetPlayerInputActions();
+        rb2D = GetComponent<Rigidbody2D>();
+        currentGravity = rb2D.gravityScale;
     }
 
 
     void Update()                                                           // Update is called once per frame
     {
-        vertical = Input.GetAxis("Vertical");
-/*
-        if(isLadder && Mathf.Abs(vertical) > 0f)                            // If player enters ladder and the vertical input is greater than 0, then climbing is true
-        {
-            isClimbing = true;
-        }
-        else
-        {
-            rb.gravityScale = 4f;                                           // If player is not climbing, gravity is set to normal value
-        }
-*/
+        vertical = playerInputActions.Player.Ladder.ReadValue<Vector2>();
     }
 
     private void FixedUpdate()
     {
-/*        
-        if(isClimbing)
+        if(isLadder && vertical.y != 0)                                     // If player enters ladder and the vertical input is not than 0, then climbing is true
         {
-            rb.gravityScale = 0f;                                           // If player is climbing, there is no gravity
-            rb.velocity = new Vector2(rb.velocity.x, vertical*speed);
+            isClimbing = true;
+            rb2D.gravityScale = 0;                                          // No Gravity for authentic Movement
+            LadderClimbing();
         }
-*/
+        else if (!isLadder)
+        {
+            isClimbing = false;
+            rb.gravityScale = currentGravity;                               // If player is leaving ladderCollision, gravity is set to normal value
+        }
     }
 
-    void GetPlayerInputActions()
+    void GetPlayerInputActions()                                            // Access to the PlayerInputActions script
     {
-        playerInputActions = new PlayerInputActions();                     // Access to the PlayerInputActions script
+        playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
-        playerInputActions.Player.Ladder.performed += LadderClimbing;
     }
 
-    public void LadderClimbing(InputAction.CallbackContext context)
+    public void LadderClimbing()                                            // if fixed to the Ladder Move up and Down
     {
-        if(context.performed && isLadder == true)
-        {
-            Vector2 inputVector = playerInputActions.Player.Ladder.ReadValue<Vector2>();
-            //rb.AddForce(new Vector3(rb.inputVector.x, 0, vertical*speed), ForceMode2D.Force);
-        }
+        Vector2 position = rb2D.position;
+        position.y += speed * vertical.y * Time.deltaTime;
+        rb2D.MovePosition(position);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)                     // Method from unity, player enters ladder
+    private void OnTriggerStay2D(Collider2D collision)                      // Method from unity, if player stays over ladder collider
     {
         if(collision.CompareTag("Ladder"))                                  // "Ladder"-Tag is set in the inspector
         {
@@ -75,9 +70,6 @@ public class LadderMovement : MonoBehaviour
         if(collision.CompareTag("Ladder"))
         {
             isLadder = false;
-            //isClimbing = false;
         }
     }
-
-
 }

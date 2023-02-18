@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    //Components
     public Animator animator;
     private BoxCollider2D boxCollider;
     private Rigidbody2D rb2D;
@@ -18,7 +19,7 @@ public class PlayerController : MonoBehaviour
     public float maxHealth = 5;
     public float health {get {return currentHealth;}}
     float currentHealth;
-    private bool isDead;
+    private bool isDead = false;
 
     private bool isInvinsible;
     private float invinsibleTimer;
@@ -38,8 +39,12 @@ public class PlayerController : MonoBehaviour
     private float jumpBufferCount;
 
     //Attack Logic
-    private bool attack;
-    public float attackPower;
+    private bool isAttack;
+    private float attack1Power = 1;
+    private bool isAttack2;
+    private float attack2Power = 0.8f;
+    private bool isAttack3;
+    private float attack3Power = 1.5f;
 
     // Edge logic
 
@@ -163,23 +168,39 @@ public class PlayerController : MonoBehaviour
 
     void OnAttack()
     {
-        attack = playerInputActions.Player.Attack.WasPressedThisFrame();
-        if(attack)
+        isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
+        isAttack2 = playerInputActions.Player.Attack2.WasPressedThisFrame();
+        if(isAttack)
         {
             animator.SetTrigger("Attack1");
-            RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.2f, LayerMask.GetMask("Enemy"));
-            if (hit.collider != null)
+            AttackCalculation(attack1Power);
+        }
+        else if (isAttack2)
+        {
+            animator.SetTrigger("Attack2");
+            AttackCalculation(attack2Power);
+        }
+        else if (isAttack3)
+        {
+            animator.SetTrigger("Attack3");
+            AttackCalculation(attack3Power);            
+        }
+    }
+
+    void AttackCalculation(float attackPower)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.3f, LayerMask.GetMask("Enemy"));
+        if (hit.collider != null)
+        {
+            CutTree tree = hit.collider.GetComponent<CutTree>();
+            if(tree != null)
             {
-                CutTree tree = hit.collider.GetComponent<CutTree>();
-                if(tree != null)
-                {
-                    tree.TreeFalling();
-                }
-                Enemy enemy = hit.collider.GetComponent<Enemy>();
-                if(enemy != null)
-                {
-                    enemy.ChangeHealth(-attackPower);
-                }
+                tree.TreeFalling();
+            }
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            if(enemy != null)
+            {
+                enemy.ChangeHealth(-attackPower);
             }
         }
     }
