@@ -138,7 +138,7 @@ MonoBehaviour:
   damage: 1
   currentHealth: 0
   isDead: 0
-  attackRange: 0.8
+  attackRange: 0.7
   groundCheck: {fileID: 7293694440788195826}
   groundLayer:
     serializedVersion: 2

@@ -297,6 +297,7 @@ public class PlayerController : MonoBehaviour
         }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);
+        UIHealthBar.instance.SetValue(currentHealth / maxHealth);
     }
 
     private void Invinsible()
@@ -313,7 +314,7 @@ public class PlayerController : MonoBehaviour
 
     private void isDeath()
     {
-        if (currentHealth <= 0)
+        if (Mathf.Approximately(currentHealth, 0))
         {
             isDead = true;
             animator.SetTrigger("Death");
