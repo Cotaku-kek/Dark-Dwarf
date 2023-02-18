@@ -62,7 +62,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740310884070495270}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.65, y: 1.9, z: -0.3479126}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -225,9 +225,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61066e93503e8454c984a024afb9362d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hookSprite: {fileID: 5826118261150973454, guid: 28de6bd3027214d4dbe87fd12a6ff422, type: 3}
   currentHitObject: {fileID: 0}
   vectorToAnchor: {x: 0, y: 0}
   pullStrengh: 20
+  ropeActive: 0
 --- !u!95 &1740310884070495271
 Animator:
   serializedVersion: 4
