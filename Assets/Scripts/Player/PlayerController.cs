@@ -170,6 +170,7 @@ public class PlayerController : MonoBehaviour
     {
         isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
         isAttack2 = playerInputActions.Player.Attack2.WasPressedThisFrame();
+        isAttack3 = playerInputActions.Player.Attack3.WasPressedThisFrame();
         if(isAttack)
         {
             animator.SetTrigger("Attack1");

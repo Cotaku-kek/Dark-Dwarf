@@ -10,8 +10,8 @@ public class LadderMovement : MonoBehaviour
 
     private Vector2 vertical;                                                 // Player moves vertically
     private float speed = 8f;                                               // Climbing speed
-    private bool isLadder;                                                  // Check if player stands next to a ladder
-    private bool isClimbing;                                                // Check if player is climbing
+    [SerializeField] private bool isLadder;                                                  // Check if player stands next to a ladder
+    [SerializeField] private bool isClimbing;                                                // Check if player is climbing
     private PlayerInputActions playerInputActions;                          // Access to the PlayerInputActions Script
     private Rigidbody2D rb2D;
     private float currentGravity;
