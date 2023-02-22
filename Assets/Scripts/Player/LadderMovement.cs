@@ -53,6 +53,8 @@ public class LadderMovement : MonoBehaviour
     public void LadderClimbing()                                            // if fixed to the Ladder Move up and Down
     {
         Vector2 position = rb2D.position;
+        if(rb2D.position.y != 0)
+            rb2D.velocity = new Vector2(0,0);
         position.y += speed * vertical.y * Time.deltaTime;
         rb2D.MovePosition(position);
     }
