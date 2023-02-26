@@ -231,7 +231,7 @@ public class PlayerController : MonoBehaviour
                     break;
             }
         }
-        if (attackCooldown < -3)
+        if (attackCooldown < -2)
         {
             attackSwitch = 0;
         }

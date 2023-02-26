@@ -6,6 +6,7 @@ public class Bandit : Enemy
 {
     private float direction = -1;
     private float standStill = 1;
+    Vector2 movement;
 
     private float attackCooldown;
     
@@ -83,15 +84,22 @@ public class Bandit : Enemy
 
     private void PatrolingArea()                                                                    //Walk from left to right until Ground ends
     {
-        Vector2 position = rb2D.position;
-        position.x += Time.deltaTime * speed * direction * standStill;
-        if(!isGrounded)
+        if(!isGrounded && rb2D.velocity.y == 0)
         {
             Flip();
         }
-
-        rb2D.MovePosition(position);
-        animator.SetInteger("AnimState", 2);
+        if(!isGrounded)
+        {
+            movement = new Vector2 (0,-rb2D.gravityScale);
+            rb2D.velocity = movement * speed;
+            animator.SetInteger("AnimState", 0);
+        }
+        if(isGrounded)
+        {
+            movement = new Vector2 (direction,0);
+            rb2D.velocity = movement * speed * standStill;
+            animator.SetInteger("AnimState", 2);
+        }
     }
 
     private void IsGrounded()                                                                       // Check if Enemy is right before cliff
