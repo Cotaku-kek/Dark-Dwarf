@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
     private Rigidbody2D rb2D;
     private PlayerInputActions playerInputActions;
+    private AudioSource audioSource;
 
     private bool isFacingRight = true;
     Vector2 lookDirection = new Vector2(1,0);
@@ -46,6 +47,11 @@ public class PlayerController : MonoBehaviour
     private bool isAttack3;
     private float attack3Power = 1.5f;
 
+    //Audio Logic
+    //public AudioClip attack1Audio;
+    //public AudioClip attack2Audio;
+    //public AudioClip attack3Audio;
+
     // Edge logic
 
     // Wall Logic
@@ -62,6 +68,7 @@ public class PlayerController : MonoBehaviour
     {
         rb2D = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        audioSource = GetComponent<AudioSource>();
         GetPlayerInputActions();
         
         currentHealth = maxHealth;
@@ -174,17 +181,20 @@ public class PlayerController : MonoBehaviour
         if(isAttack)
         {
             animator.SetTrigger("Attack1");
+            //PlaySound(attack1Audio);
             AttackCalculation(attack1Power);
         }
         else if (isAttack2)
         {
             animator.SetTrigger("Attack2");
+            //PlaySound(attack2Audio);
             AttackCalculation(attack2Power);
         }
         else if (isAttack3)
         {
             animator.SetTrigger("Attack3");
-            AttackCalculation(attack3Power);            
+            //PlaySound(attack3Audio);
+            AttackCalculation(attack3Power);           
         }
     }
 
@@ -322,5 +332,10 @@ public class PlayerController : MonoBehaviour
             playerInputActions.Player.Disable();
             rb2D.simulated = false;
         }
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
     }
 }
