@@ -46,6 +46,8 @@ public class PlayerController : MonoBehaviour
     private float attack2Power = 0.8f;
     private bool isAttack3;
     private float attack3Power = 1.5f;
+    [SerializeField] private float attackSwitch = 0;
+    private float attackCooldown;
 
     //Audio Logic
     //public AudioClip attack1Audio;
@@ -173,7 +175,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnAttack()
+    void OnAttackOld()
     {
         isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
         isAttack2 = playerInputActions.Player.Attack2.WasPressedThisFrame();
@@ -195,6 +197,43 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Attack3");
             //PlaySound(attack3Audio);
             AttackCalculation(attack3Power);           
+        }
+    }
+
+    void OnAttack()
+    {
+        isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
+        attackCooldown -= Time.deltaTime;
+        if (isAttack && attackCooldown < 0)
+        {
+            switch(attackSwitch)
+            {
+                case 0:
+                    animator.SetTrigger("Attack1");
+                    AttackCalculation(attack1Power);
+                    attackCooldown = 0.5f;
+                    attackSwitch++; 
+                    break;
+                case 1:
+                    animator.SetTrigger("Attack2");
+                    AttackCalculation(attack2Power);
+                    attackCooldown = 0.4f;
+                    attackSwitch++;
+                    break;
+                case 2:
+                    animator.SetTrigger("Attack3");
+                    AttackCalculation(attack3Power);
+                    attackCooldown = 0.8f;
+                    attackSwitch = 0;
+                    break;
+                default:
+                    attackSwitch = 0;
+                    break;
+            }
+        }
+        if (attackCooldown < -3)
+        {
+            attackSwitch = 0;
         }
     }
 
