@@ -11,6 +11,14 @@ public class Flying : Enemy
     [SerializeField] private float directionTime;
     Vector2 movement;
 
+    private float overlapRadius = 3;
+    [SerializeField] private GameObject currentHitObject;
+    private Vector2 lookDirection;
+
+    private Vector3 idlePosition;
+    private float savedDirectionTimer;
+    [SerializeField] private bool isPositionSaved;
+
     protected override void Awake()
     {
         base.Awake();
@@ -21,27 +29,75 @@ public class Flying : Enemy
     // Update is called once per frame
     void Update()
     {
-        
+        Scanning();
     }
 
     void FixedUpdate()
     {
-        FlyingMovement();
+        if (!isDead)
+            Behaviour();
+        ConditionalFlip();
     }
 
-    private void FlyingMovement()
+    private void Scanning()
     {
-        directionTimer -= Time.fixedDeltaTime;
-        if(directionTimer < 0)
+        Collider2D collider = Physics2D.OverlapCircle(transform.position, overlapRadius, LayerMask.GetMask("Player"));
+        if (collider != null)
         {
-            Flip();
-            directionTimer = directionTime;
+            currentHitObject = collider.transform.gameObject;
         }
-        movement = new Vector2(direction,0);
+        else currentHitObject = null;
+    }
+
+    private void Behaviour()
+    {
+        // Patrollierendes Hin- und Herfliegen
+        if(currentHitObject == null && !isPositionSaved)
+        {
+            directionTimer -= Time.fixedDeltaTime;
+            if(directionTimer < 0)
+            {
+                direction = -direction;
+                directionTimer = directionTime;
+            }
+            Movement(new Vector2(direction,0));
+        }
+
+        // Idle Position speichern und auf Spieler zufliegen
+        if (currentHitObject != null)
+        {
+            if(!isPositionSaved)
+            {
+                idlePosition = transform.position;
+                savedDirectionTimer = directionTimer;
+                isPositionSaved = true;
+            }
+            else if(isPositionSaved)
+            {
+                lookDirection = ((currentHitObject.transform.position + currentHitObject.transform.up) - transform.position).normalized;
+                Movement(lookDirection);
+            }
+        }
+
+        // Player verschwindet aus Sichtweite, fliege zurück zu Ursprungsposition
+        if (currentHitObject == null && isPositionSaved)
+        {
+            lookDirection = (idlePosition - transform.position).normalized;
+            Movement(lookDirection);
+            if (Vector2.Distance(transform.position, idlePosition) < 0.5f)                  //Mathf.Approximately(transform.position.x, idlePosition.x) || Mathf.Approximately(transform.position.y, idlePosition.y)
+            {
+                isPositionSaved = false;
+                directionTimer = savedDirectionTimer;
+            }
+        }
+    }
+
+    private void Movement(Vector2 movement)
+    {
         rb2D.velocity = movement * speed;
     }
 
-    void OnTriggerEnter2D(Collider2D other)                                                       // Damage if hit by Bad Guy
+    void OnTriggerStay2D(Collider2D other)                                                       // Damage if hit by Bad Guy
     {
         PlayerController player = other.gameObject.GetComponent<PlayerController>();
 
@@ -58,36 +114,23 @@ public class Flying : Enemy
         Debug.Log(currentHealth + "+" + isDead);
         if(isDead)
         {
-            rb2D.simulated = false;
+            rb2D.gravityScale = 3;
         }
     }
-
-    private void Flip()                                                                             // flip walking direktion and sprite
-    {
-        direction = -direction;
-        Vector2 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;
-    }
-
-    /* Angriff
-    Wenn Player in Sichtweite
-    speichere Standort und fliege auf Player zu
-        !berechnung der direction pausieren
-    Wenn Angriff beendet 
-        1. Player erneut angreifen wenn in Reichweite, eventuell "anlauf nehmen", Cooldown
-        2. zur gespeicherten Position zurückfliegen
-    Patrollieren wiederaufnehmen
-    */
     
-    /* Sichtweite
-    eventuell raytrace oder Physics2D.OverlapCircleAll wie im Wurfhaken-Skript
-        
-        Collider2D[] collider = Physics2D.OverlapCircleAll(transform.position, overlapRadius, layerMask);
-        if (collider.Length >= 1)                                           // If Object in Collider Array, get its infos. 0 is always the nearest Object
+    private void ConditionalFlip()
+    {
+        if (rb2D.velocity.x > 0)
         {
-            currentHitObject = collider[0].transform.gameObject;
+            Vector2 theScale = transform.localScale;
+            theScale.x = 1;
+            transform.localScale = theScale;
         }
-
-    */
+        if (rb2D.velocity.x < 0)
+        {
+            Vector2 theScale = transform.localScale;
+            theScale.x = -1;
+            transform.localScale = theScale;
+        }
+    }
 }

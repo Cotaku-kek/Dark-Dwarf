@@ -70,6 +70,7 @@ Transform:
   - {fileID: 1740310882924193291}
   - {fileID: 1740310884812663437}
   - {fileID: 8010771989236736780}
+  - {fileID: 4307776346178602370}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -189,6 +190,20 @@ MonoBehaviour:
   movementSpeed: 7000
   jumpHeight: 750
   jumpBufferLength: 0.1
+  isAttack: 0
+  attack1Power: 1
+  attack1Cooldown: 0.5
+  attack2Power: 0.8
+  attack2Cooldown: 0.4
+  attack3Power: 1.5
+  attack3Cooldown: 0.8
+  attackSwitch: 0
+  attackCooldown: 0
+  attackPoint: {fileID: 4307776346178602370}
+  attackRange: 1
+  attackMask:
+    serializedVersion: 2
+    m_Bits: 512
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}
@@ -419,3 +434,34 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5428313953679790446}
   m_Enabled: 1
+--- !u!1 &6375701741960151246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4307776346178602370}
+  m_Layer: 10
+  m_Name: Attack_Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4307776346178602370
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6375701741960151246}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.799, y: 0.815, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1740310884070495278}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

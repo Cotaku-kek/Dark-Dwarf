@@ -39,15 +39,20 @@ public class PlayerController : MonoBehaviour
     public float jumpBufferLength = 0.05f;
     private float jumpBufferCount;
 
-    //Attack Logic
-    private bool isAttack;
-    private float attack1Power = 1;
-    private bool isAttack2;
-    private float attack2Power = 0.8f;
-    private bool isAttack3;
-    private float attack3Power = 1.5f;
+    [Header("Attack Logic")]
+    [SerializeField] private bool isAttack;
+    [SerializeField] private float attack1Power = 1;
+    [SerializeField] private float attack1Cooldown = 0.5f;
+    [SerializeField] private float attack2Power = 0.8f;
+    [SerializeField] private float attack2Cooldown = 0.4f;
+    [SerializeField] private float attack3Power = 1.5f;
+    [SerializeField] private float attack3Cooldown = 0.8f;
     [SerializeField] private float attackSwitch = 0;
-    private float attackCooldown;
+    [SerializeField] private float attackCooldown;
+
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRange;
+    [SerializeField] private LayerMask attackMask;
 
     //Audio Logic
     //public AudioClip attack1Audio;
@@ -101,7 +106,6 @@ public class PlayerController : MonoBehaviour
     {
         playerInputActions = new PlayerInputActions();                                            // Access to the PlayerInputActions script
         playerInputActions.Player.Enable();
-        //playerInputActions.Player.Jump.performed += JumpLogic;
     }
 
     void MovementInput()
@@ -175,31 +179,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnAttackOld()
-    {
-        isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
-        isAttack2 = playerInputActions.Player.Attack2.WasPressedThisFrame();
-        isAttack3 = playerInputActions.Player.Attack3.WasPressedThisFrame();
-        if(isAttack)
-        {
-            animator.SetTrigger("Attack1");
-            //PlaySound(attack1Audio);
-            AttackCalculation(attack1Power);
-        }
-        else if (isAttack2)
-        {
-            animator.SetTrigger("Attack2");
-            //PlaySound(attack2Audio);
-            AttackCalculation(attack2Power);
-        }
-        else if (isAttack3)
-        {
-            animator.SetTrigger("Attack3");
-            //PlaySound(attack3Audio);
-            AttackCalculation(attack3Power);           
-        }
-    }
-
     void OnAttack()
     {
         isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
@@ -211,19 +190,19 @@ public class PlayerController : MonoBehaviour
                 case 0:
                     animator.SetTrigger("Attack1");
                     AttackCalculation(attack1Power);
-                    attackCooldown = 0.5f;
+                    attackCooldown = attack1Cooldown;
                     attackSwitch++; 
                     break;
                 case 1:
                     animator.SetTrigger("Attack2");
                     AttackCalculation(attack2Power);
-                    attackCooldown = 0.4f;
+                    attackCooldown = attack2Cooldown;
                     attackSwitch++;
                     break;
                 case 2:
                     animator.SetTrigger("Attack3");
                     AttackCalculation(attack3Power);
-                    attackCooldown = 0.8f;
+                    attackCooldown = attack3Cooldown;
                     attackSwitch = 0;
                     break;
                 default:
@@ -239,21 +218,34 @@ public class PlayerController : MonoBehaviour
 
     void AttackCalculation(float attackPower)
     {
-        RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.3f, LayerMask.GetMask("Enemy"));
-        if (hit.collider != null)
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackMask);
+        foreach (Collider2D hit in hits)
         {
-            CutTree tree = hit.collider.GetComponent<CutTree>();
-            if(tree != null)
+            if (hit != null)
             {
-                tree.TreeFalling();
-            }
-            Enemy enemy = hit.collider.GetComponent<Enemy>();
-            if(enemy != null)
-            {
-                enemy.ChangeHealth(-attackPower);
+                CutTree tree = hit.GetComponent<CutTree>();
+                if(tree != null)
+                {
+                    tree.TreeFalling();
+                }
+                Enemy enemy = hit.GetComponent<Enemy>();
+                if(enemy != null)
+                {
+                    enemy.ChangeHealth(-attackPower);
+                }
             }
         }
     }
+
+    /*
+    private void OnDrawGizmos()
+    {
+        if (attackPoint == null)
+            return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+    */
 
     void WallJump()
     {
