@@ -15,8 +15,8 @@ public class Bandit : Enemy
 
     [SerializeField] private bool isGrounded = true;
 
-    [SerializeField] Rigidbody2D rb2D;
-    [SerializeField] Animator animator;
+    private Rigidbody2D rb2D;
+    private Animator animator;
 
     // Start is called before the first frame update
 
