@@ -4491,10 +4491,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knight
       objectReference: {fileID: 0}
-    - target: {fileID: 1740310884070495274, guid: 2aec5ff52fafca84d9d89a338e884ba3, type: 3}
-      propertyPath: attackRange
-      value: 0.8
-      objectReference: {fileID: 0}
     - target: {fileID: 1740310884070495278, guid: 2aec5ff52fafca84d9d89a338e884ba3, type: 3}
       propertyPath: m_RootOrder
       value: 8

@@ -16,9 +16,9 @@ public class PlayerController : MonoBehaviour
     private bool isFacingRight = true;
     Vector2 lookDirection = new Vector2(1,0);
 
-    //Health/Mana
-    public float maxHealth = 5;
-    public float health {get {return currentHealth;}}
+    [Header("Health Mana")]
+    [SerializeField] private float maxHealth = 5;
+    [SerializeField] private float health {get {return currentHealth;}}
     float currentHealth;
     private bool isDead = false;
 
@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Attack Logic")]
     [SerializeField] private bool isAttack;
+    [SerializeField] private float attackBufferLength = 0.3f;
+    [SerializeField] private float attackBufferCount;
+
     [SerializeField] private float attack1Power = 1;
     [SerializeField] private float attack1Cooldown = 0.5f;
     [SerializeField] private float attack2Power = 0.8f;
@@ -49,6 +52,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attack3Cooldown = 0.8f;
     [SerializeField] private float attackSwitch = 0;
     [SerializeField] private float attackCooldown;
+    [SerializeField] private float attackReset;
 
     [SerializeField] private Transform attackPoint;
     [SerializeField] private float attackRange;
@@ -182,8 +186,15 @@ public class PlayerController : MonoBehaviour
     void OnAttack()
     {
         isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
+
+        if (isAttack)
+            attackBufferCount = attackBufferLength;
+        else 
+            attackBufferCount -= Time.deltaTime;
+
         attackCooldown -= Time.deltaTime;
-        if (isAttack && attackCooldown < 0)
+
+        if (attackBufferCount > 0 && attackCooldown < 0)
         {
             switch(attackSwitch)
             {
@@ -191,26 +202,29 @@ public class PlayerController : MonoBehaviour
                     animator.SetTrigger("Attack1");
                     AttackCalculation(attack1Power);
                     attackCooldown = attack1Cooldown;
-                    attackSwitch++; 
+                    attackSwitch++;
+                    attackBufferCount = 0;
                     break;
                 case 1:
                     animator.SetTrigger("Attack2");
                     AttackCalculation(attack2Power);
                     attackCooldown = attack2Cooldown;
                     attackSwitch++;
+                    attackBufferCount = 0;
                     break;
                 case 2:
                     animator.SetTrigger("Attack3");
                     AttackCalculation(attack3Power);
                     attackCooldown = attack3Cooldown;
                     attackSwitch = 0;
+                    attackBufferCount = 0;
                     break;
                 default:
                     attackSwitch = 0;
                     break;
             }
         }
-        if (attackCooldown < -2)
+        if (attackCooldown < -attackReset)
         {
             attackSwitch = 0;
         }
@@ -237,7 +251,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /*
+    
     private void OnDrawGizmos()
     {
         if (attackPoint == null)
@@ -245,7 +259,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
-    */
+    
 
     void WallJump()
     {

@@ -191,16 +191,19 @@ MonoBehaviour:
   jumpHeight: 750
   jumpBufferLength: 0.1
   isAttack: 0
+  attackBufferLength: 0.5
+  attackBufferCount: 0
   attack1Power: 1
-  attack1Cooldown: 0.5
+  attack1Cooldown: 0.4
   attack2Power: 0.8
   attack2Cooldown: 0.4
   attack3Power: 1.5
-  attack3Cooldown: 0.8
+  attack3Cooldown: 0.6
   attackSwitch: 0
   attackCooldown: 0
+  attackReset: 0.5
   attackPoint: {fileID: 4307776346178602370}
-  attackRange: 1
+  attackRange: 0.8
   attackMask:
     serializedVersion: 2
     m_Bits: 512
