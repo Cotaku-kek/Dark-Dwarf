@@ -207,6 +207,7 @@ MonoBehaviour:
   attackMask:
     serializedVersion: 2
     m_Bits: 512
+  projectilePrefab: {fileID: 7682178176749235710, guid: 08590f15afda74c47bcb90a9211f75b2, type: 3}
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}

@@ -33,16 +33,16 @@ public class PlayerController : MonoBehaviour
     //Jump Logic
     private bool jump;
     [SerializeField] float jumpHeight;
-    private bool isGrounded;
-    private float coyoteTime = 0.1f;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private float coyoteTime = 0.1f;
     private float coyoteCounter;
-    public float jumpBufferLength = 0.05f;
+    [SerializeField] private float jumpBufferLength = 0.05f;
     private float jumpBufferCount;
 
     [Header("Attack Logic")]
     [SerializeField] private bool isAttack;
     [SerializeField] private float attackBufferLength = 0.3f;
-    [SerializeField] private float attackBufferCount;
+    private float attackBufferCount;
 
     [SerializeField] private float attack1Power = 1;
     [SerializeField] private float attack1Cooldown = 0.5f;
@@ -57,6 +57,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform attackPoint;
     [SerializeField] private float attackRange;
     [SerializeField] private LayerMask attackMask;
+
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private bool isThrow;
+    [SerializeField] private float throwingStrength = 2000;
+    [SerializeField] public float throwingAxePower = 1;
 
     //Audio Logic
     //public AudioClip attack1Audio;
@@ -186,6 +191,10 @@ public class PlayerController : MonoBehaviour
     void OnAttack()
     {
         isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
+        isThrow = playerInputActions.Player.Throw.WasPerformedThisFrame();
+
+        if (isThrow)
+            Launch();
 
         if (isAttack)
             attackBufferCount = attackBufferLength;
@@ -250,14 +259,20 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     
-    private void OnDrawGizmos()
+    void OnDrawGizmos()
     {
         if (attackPoint == null)
             return;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    void Launch()
+    {
+        GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position + Vector2.up * 0.5f, Quaternion.identity);
+        ThrowingAxe projectile = projectileObject.GetComponent<ThrowingAxe>();
+        projectile.Throw(new Vector2(lookDirection.x,1f), throwingStrength);
     }
     
 
