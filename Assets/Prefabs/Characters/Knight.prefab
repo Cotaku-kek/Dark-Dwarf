@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 1740310884070495274}
   - component: {fileID: 1740310884070495273}
   - component: {fileID: 1740310884070495272}
+  - component: {fileID: 6429268286869290773}
   - component: {fileID: 1740310884070495271}
   - component: {fileID: -4235425492771484197}
   m_Layer: 10
@@ -189,10 +190,11 @@ MonoBehaviour:
   maxHealth: 5
   movementSpeed: 7000
   jumpHeight: 750
+  isGrounded: 0
+  coyoteTime: 0.1
   jumpBufferLength: 0.1
   isAttack: 0
   attackBufferLength: 0.5
-  attackBufferCount: 0
   attack1Power: 1
   attack1Cooldown: 0.4
   attack2Power: 0.8
@@ -208,6 +210,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   projectilePrefab: {fileID: 7682178176749235710, guid: 08590f15afda74c47bcb90a9211f75b2, type: 3}
+  isThrow: 0
+  throwCooldown: 0
+  throwCooldownTime: 1
+  throwingStrength: 2000
+  throwingAxePower: 6
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}
@@ -251,6 +258,21 @@ MonoBehaviour:
   currentHitObject: {fileID: 0}
   pullStrengh: 20
   ropeActive: 0
+--- !u!114 &6429268286869290773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740310884070495270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21e75ba8f2d15d449a3b4c8104044444, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pooledObjects: []
+  objectToPool: {fileID: 7682178176749235710, guid: 08590f15afda74c47bcb90a9211f75b2, type: 3}
+  amountToPool: 10
 --- !u!95 &1740310884070495271
 Animator:
   serializedVersion: 4

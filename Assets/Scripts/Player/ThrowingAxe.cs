@@ -18,9 +18,9 @@ public class ThrowingAxe : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.magnitude > 1000.0f)
+        if(transform.position.magnitude > 500.0f)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
@@ -37,8 +37,8 @@ public class ThrowingAxe : MonoBehaviour
         }
         else
         {
-        rb2D.AddForce(direction * force);
-        rb2D.AddTorque(-axeRotation, ForceMode2D.Force);
+            rb2D.AddForce(direction * force);
+            rb2D.AddTorque(-axeRotation, ForceMode2D.Force);
         }
     }
 
@@ -46,13 +46,13 @@ public class ThrowingAxe : MonoBehaviour
     {
         Enemy e = other.collider.GetComponent<Enemy>();
             e?.ChangeHealth(-throwingAxePower);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         Enemy e = other.gameObject.GetComponent<Enemy>();
             e?.ChangeHealth(-throwingAxePower);
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

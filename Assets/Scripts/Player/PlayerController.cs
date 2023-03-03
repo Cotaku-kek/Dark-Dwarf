@@ -60,6 +60,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private bool isThrow;
+    [SerializeField] private float throwCooldown;
+    [SerializeField] private float throwCooldownTime = 1f;
     [SerializeField] private float throwingStrength = 2000;
     [SerializeField] public float throwingAxePower = 1;
 
@@ -193,15 +195,16 @@ public class PlayerController : MonoBehaviour
         isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
         isThrow = playerInputActions.Player.Throw.WasPerformedThisFrame();
 
+        attackCooldown -= Time.deltaTime;
+        throwCooldown -= Time.deltaTime;
+
         if (isThrow)
-            Launch();
+            LaunchAxe();
 
         if (isAttack)
             attackBufferCount = attackBufferLength;
         else 
             attackBufferCount -= Time.deltaTime;
-
-        attackCooldown -= Time.deltaTime;
 
         if (attackBufferCount > 0 && attackCooldown < 0)
         {
@@ -268,13 +271,22 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    void Launch()
+    void LaunchAxe()
     {
-        GameObject projectileObject = Instantiate(projectilePrefab, rb2D.position + Vector2.up * 0.5f, Quaternion.identity);
-        ThrowingAxe projectile = projectileObject.GetComponent<ThrowingAxe>();
-        projectile.Throw(new Vector2(lookDirection.x,1f), throwingStrength);
+        if (throwCooldown < 0)
+        {
+            GameObject projectileObject = ThrowingAxePool.SharedInstance.GetPooledObject();  //Instantiate(projectilePrefab, rb2D.position + Vector2.up * 0.5f, Quaternion.identity);
+            if (projectileObject != null)
+            {
+                projectileObject.transform.position = rb2D.position + Vector2.up * 0.5f;
+                projectileObject.transform.rotation = Quaternion.identity;
+                projectileObject.SetActive(true);
+            }
+            ThrowingAxe projectile = projectileObject.GetComponent<ThrowingAxe>();
+            projectile.Throw(new Vector2(lookDirection.x,1f), throwingStrength);
+            throwCooldown = throwCooldownTime;
+        }
     }
-    
 
     void WallJump()
     {
