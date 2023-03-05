@@ -64,6 +64,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float throwingStrength = 2000;
     [SerializeField] public float throwingAxePower = 1;
 
+    [Header("Interactions")]
+    [SerializeField] private bool isInteract;
+    [SerializeField] private LayerMask interactMask;
+
     //Audio Logic
     //public AudioClip attack1Audio;
     //public AudioClip attack2Audio;
@@ -71,15 +75,17 @@ public class PlayerController : MonoBehaviour
 
     // Edge logic
 
-    // Wall Logic
-    private bool isWallSliding, isWallJumping;
-    private float wallJumpingCounter, wallJumpingDirection; 
+    [Header("Edge and Wall Logic")]
+    [SerializeField] private bool isWallSliding, isWallJumping;
+    [SerializeField] private float wallJumpingCounter, wallJumpingDirection; 
     [SerializeField] float wallJumpingTime = 0.8f, wallJumpingDuration = 0.8f;
     [SerializeField] Vector2 wallJumpingPower = new Vector2(4f, 1f);
     [SerializeField] float wallSlidingSpeed;
 
     [SerializeField] private LayerMask groundLayer, wallLayer;
-    [SerializeField] private Transform groundCheck, wallCheck;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private Transform edgeCheck;
 
     void Awake()
     {
@@ -94,6 +100,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         MovementInput();
+        OnInteract();
         OnJump();
         OnAttack();
         WallSlide();
@@ -143,6 +150,25 @@ public class PlayerController : MonoBehaviour
         else
         {
             animator.SetInteger("AnimState", 0);
+        }
+    }
+
+    void OnInteract()
+    {
+        isInteract = playerInputActions.Player.Interact.WasPerformedThisFrame();
+
+        if (isInteract)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, interactMask);
+            foreach (Collider2D hit in hits)
+            {
+                if (hit != null)
+                {
+                    Debug.Log("Object "+ hit.name + " erkannt");
+                    SwitchMechanic switchMechanic = hit.GetComponent<SwitchMechanic>();
+                        switchMechanic?.ToggleSwitch();
+                }                 
+            }
         }
     }
 

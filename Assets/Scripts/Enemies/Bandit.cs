@@ -117,7 +117,6 @@ public class Bandit : Enemy
     private void IsWall()                                                                           //Check if Enemy is approching a wall
     {
         isWall = Physics2D.OverlapCircle(wallCheck.position, 0.02f, groundLayer);
-        Debug.Log("Wand vor Mir");
     }
 
     private void Flip()                                                                             // flip walking direktion and sprite

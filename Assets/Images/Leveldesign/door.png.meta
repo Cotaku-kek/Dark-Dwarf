@@ -117,13 +117,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: door_top
+      name: door_open
       rect:
         serializedVersion: 2
         x: 0
-        y: 64
+        y: 0
         width: 64
-        height: 64
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,41 +131,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c6731cbc6b0defa43a029b99a73552f5
+      spriteID: a9d3f7c7d85191840b2956b1b341c7fb
       internalID: -1679441769
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: door_bottom
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 91848548f52cb9c458eb10a546119c4c
-      internalID: 1893612431
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: door_top_closed
+      name: door_closed
       rect:
         serializedVersion: 2
         x: 64
-        y: 64
+        y: 0
         width: 64
-        height: 64
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -173,29 +152,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f1aad6cbf7fe9a240882f49d489705af
+      spriteID: a64d2fa10f8ee64429e92d89c52ddc42
       internalID: -639518904
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: door_bottom_closed
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 0
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c05c055396ee53b46b7f4544fbbe4031
-      internalID: 1171316388
       vertices: []
       indices: 
       edges: []
@@ -211,10 +169,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      door_top: -1679441769
-      door_bottom: 1893612431
-      door_bottom_closed: 1171316388
-      door_top_closed: -639518904
+      door_open: -1679441769
+      door_closed: -639518904
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

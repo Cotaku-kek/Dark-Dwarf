@@ -9,7 +9,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: State
+    m_ConditionEvent: isOn
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8083485694957863280}
@@ -47,11 +47,11 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 380, y: 240, z: 0}
+  m_AnyStatePosition: {x: 380, y: -80, z: 0}
   m_EntryPosition: {x: 20, y: 150, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
-  m_DefaultState: {fileID: 8083485694957863280}
+  m_DefaultState: {fileID: 5807430989467393631}
 --- !u!91 &9100000
 AnimatorController:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ AnimatorController:
   m_Name: Switch
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: State
+  - m_Name: isOn
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -89,7 +89,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: State
+    m_ConditionEvent: isOn
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5807430989467393631}
