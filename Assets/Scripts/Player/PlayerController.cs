@@ -19,24 +19,23 @@ public class PlayerController : MonoBehaviour
     [Header("Health Mana")]
     [SerializeField] private float maxHealth = 5;
     [SerializeField] private float health {get {return currentHealth;}}
-    float currentHealth;
-    private bool isDead = false;
+    [SerializeField] private float currentHealth;
+    [SerializeField] private bool isDead = false;
 
-    private bool isInvinsible;
-    private float invinsibleTimer;
-    private float timeInvincible = 1.5f;
+    [SerializeField] private bool isInvinsible;
+    [SerializeField] private float invinsibleTimer;
+    [SerializeField] private float timeInvincible = 1.5f;
 
-    //Movement Logic
-    private Vector2 moveInput;
-    [SerializeField] float movementSpeed;
+    [Header("Movement")]
+    [SerializeField] private Vector2 moveInput;
+    [SerializeField] private float movementSpeed;
 
-    //Jump Logic
-    private bool jump;
-    [SerializeField] float jumpHeight;
+    [SerializeField] private bool jump;
+    [SerializeField] private float jumpHeight;
     [SerializeField] private bool isGrounded;
     [SerializeField] private float coyoteTime = 0.1f;
-    private float coyoteCounter;
     [SerializeField] private float jumpBufferLength = 0.05f;
+    private float coyoteCounter;
     private float jumpBufferCount;
 
     [Header("Attack Logic")]
