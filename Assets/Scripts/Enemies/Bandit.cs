@@ -11,9 +11,11 @@ public class Bandit : Enemy
     private float attackCooldown;
     
     [SerializeField] private Transform groundCheck;
+    [SerializeField] private Transform wallCheck;
     [SerializeField] private LayerMask groundLayer;
 
     [SerializeField] private bool isGrounded = true;
+    [SerializeField] private bool isWall = true;
 
     private Rigidbody2D rb2D;
     private Animator animator;
@@ -23,6 +25,7 @@ public class Bandit : Enemy
     void FixedUpdate()
     {
         IsGrounded();
+        IsWall();
         PatrolingArea();
     }
 
@@ -100,11 +103,21 @@ public class Bandit : Enemy
             rb2D.velocity = movement * speed * standStill;
             animator.SetInteger("AnimState", 2);
         }
+        if (isWall)
+        {
+            Flip();
+        }
     }
 
     private void IsGrounded()                                                                       // Check if Enemy is right before cliff
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+    }
+
+    private void IsWall()                                                                           //Check if Enemy is approching a wall
+    {
+        isWall = Physics2D.OverlapCircle(wallCheck.position, 0.02f, groundLayer);
+        Debug.Log("Wand vor Mir");
     }
 
     private void Flip()                                                                             // flip walking direktion and sprite

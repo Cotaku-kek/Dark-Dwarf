@@ -65,7 +65,7 @@ Transform:
   m_GameObject: {fileID: 1740310884070495270}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2, y: 0.7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1740310882924193291}
@@ -214,7 +214,7 @@ MonoBehaviour:
   throwCooldown: 0
   throwCooldownTime: 1
   throwingStrength: 2000
-  throwingAxePower: 6
+  throwingAxePower: 1
   wallJumpingTime: 0.8
   wallJumpingDuration: 0.8
   wallJumpingPower: {x: 1, y: 10}
