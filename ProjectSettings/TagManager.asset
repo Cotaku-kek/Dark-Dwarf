@@ -18,9 +18,9 @@ TagManager:
   - Confiner
   - Enemy
   - Player
-  - 
-  - 
-  - 
+  - NoCollision
+  - Projectiles
+  - Interactibles
   - 
   - 
   - 

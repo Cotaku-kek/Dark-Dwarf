@@ -6,55 +6,92 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    //Components
     public Animator animator;
     private BoxCollider2D boxCollider;
     private Rigidbody2D rb2D;
     private PlayerInputActions playerInputActions;
+    private AudioSource audioSource;
 
     private bool isFacingRight = true;
     Vector2 lookDirection = new Vector2(1,0);
 
-    //Health/Mana
-    public int maxHealth = 5;
-    public int health {get {return currentHealth;}}
-    int currentHealth;
+    [Header("Health Mana")]
+    [SerializeField] private float maxHealth = 5;
+    [SerializeField] private float health {get {return currentHealth;}}
+    [SerializeField] private float currentHealth;
+    [SerializeField] private bool isDead = false;
 
-    private bool isInvinsible;
-    private float invinsibleTimer;
-    private float timeInvincible = 2.0f;
+    [SerializeField] private bool isInvinsible;
+    [SerializeField] private float invinsibleTimer;
+    [SerializeField] private float timeInvincible = 1.5f;
 
-    //Movement Logic
-    private Vector2 moveInput;
-    [SerializeField] float movementSpeed;
+    [Header("Movement")]
+    [SerializeField] private Vector2 moveInput;
+    [SerializeField] private float movementSpeed;
 
-    //Jump Logic
-    private bool jump;
-    [SerializeField] float jumpHeight;
-    private bool isGrounded;
-    private float coyoteTime = 0.1f;
+    [SerializeField] private bool jump;
+    [SerializeField] private float jumpHeight;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferLength = 0.05f;
     private float coyoteCounter;
-    public float jumpBufferLength = 0.05f;
     private float jumpBufferCount;
 
-    //Attack Logic
-    private bool attack;
+    [Header("Attack Logic")]
+    [SerializeField] private bool isAttack;
+    [SerializeField] private float attackBufferLength = 0.3f;
+    private float attackBufferCount;
+
+    [SerializeField] private float attack1Power = 1;
+    [SerializeField] private float attack1Cooldown = 0.5f;
+    [SerializeField] private float attack2Power = 0.8f;
+    [SerializeField] private float attack2Cooldown = 0.4f;
+    [SerializeField] private float attack3Power = 1.5f;
+    [SerializeField] private float attack3Cooldown = 0.8f;
+    [SerializeField] private float attackSwitch = 0;
+    [SerializeField] private float attackCooldown;
+    [SerializeField] private float attackReset;
+
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRange;
+    [SerializeField] private LayerMask attackMask;
+
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private bool isThrow;
+    [SerializeField] private float throwCooldown;
+    [SerializeField] private float throwCooldownTime = 1f;
+    [SerializeField] private float throwingStrength = 2000;
+    [SerializeField] public float throwingAxePower = 1;
+
+    [Header("Interactions")]
+    [SerializeField] private bool isInteract;
+    [SerializeField] private LayerMask interactMask;
+
+    //Audio Logic
+    //public AudioClip attack1Audio;
+    //public AudioClip attack2Audio;
+    //public AudioClip attack3Audio;
 
     // Edge logic
 
-    // Wall Logic
-    private bool isWallSliding, isWallJumping;
-    private float wallJumpingCounter, wallJumpingDirection; 
+    [Header("Edge and Wall Logic")]
+    [SerializeField] private bool isWallSliding, isWallJumping;
+    [SerializeField] private float wallJumpingCounter, wallJumpingDirection; 
     [SerializeField] float wallJumpingTime = 0.8f, wallJumpingDuration = 0.8f;
     [SerializeField] Vector2 wallJumpingPower = new Vector2(4f, 1f);
     [SerializeField] float wallSlidingSpeed;
 
     [SerializeField] private LayerMask groundLayer, wallLayer;
-    [SerializeField] private Transform groundCheck, wallCheck;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private Transform edgeCheck;
 
     void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        audioSource = GetComponent<AudioSource>();
         GetPlayerInputActions();
         
         currentHealth = maxHealth;
@@ -63,6 +100,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         MovementInput();
+        OnInteract();
         OnJump();
         OnAttack();
         WallSlide();
@@ -85,7 +123,6 @@ public class PlayerController : MonoBehaviour
     {
         playerInputActions = new PlayerInputActions();                                            // Access to the PlayerInputActions script
         playerInputActions.Player.Enable();
-        //playerInputActions.Player.Jump.performed += JumpLogic;
     }
 
     void MovementInput()
@@ -113,6 +150,25 @@ public class PlayerController : MonoBehaviour
         else
         {
             animator.SetInteger("AnimState", 0);
+        }
+    }
+
+    void OnInteract()
+    {
+        isInteract = playerInputActions.Player.Interact.WasPerformedThisFrame();
+
+        if (isInteract)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, interactMask);
+            foreach (Collider2D hit in hits)
+            {
+                if (hit != null)
+                {
+                    Debug.Log("Object "+ hit.name + " erkannt");
+                    SwitchMechanic switchMechanic = hit.GetComponent<SwitchMechanic>();
+                        switchMechanic?.ToggleSwitch();
+                }                 
+            }
         }
     }
 
@@ -161,19 +217,99 @@ public class PlayerController : MonoBehaviour
 
     void OnAttack()
     {
-        attack = playerInputActions.Player.Attack.WasPressedThisFrame();
-        if(attack)
+        isAttack = playerInputActions.Player.Attack.WasPressedThisFrame();
+        isThrow = playerInputActions.Player.Throw.WasPerformedThisFrame();
+
+        attackCooldown -= Time.deltaTime;
+        throwCooldown -= Time.deltaTime;
+
+        if (isThrow)
+            LaunchAxe();
+
+        if (isAttack)
+            attackBufferCount = attackBufferLength;
+        else 
+            attackBufferCount -= Time.deltaTime;
+
+        if (attackBufferCount > 0 && attackCooldown < 0)
         {
-            animator.SetTrigger("Attack1");
-            RaycastHit2D hit = Physics2D.Raycast(rb2D.position + Vector2.up * 0.2f, lookDirection, 1.2f, LayerMask.GetMask("Enemy"));
-            if (hit.collider != null)
+            switch(attackSwitch)
             {
-                CutTree tree = hit.collider.GetComponent<CutTree>();
+                case 0:
+                    animator.SetTrigger("Attack1");
+                    AttackCalculation(attack1Power);
+                    attackCooldown = attack1Cooldown;
+                    attackSwitch++;
+                    attackBufferCount = 0;
+                    break;
+                case 1:
+                    animator.SetTrigger("Attack2");
+                    AttackCalculation(attack2Power);
+                    attackCooldown = attack2Cooldown;
+                    attackSwitch++;
+                    attackBufferCount = 0;
+                    break;
+                case 2:
+                    animator.SetTrigger("Attack3");
+                    AttackCalculation(attack3Power);
+                    attackCooldown = attack3Cooldown;
+                    attackSwitch = 0;
+                    attackBufferCount = 0;
+                    break;
+                default:
+                    attackSwitch = 0;
+                    break;
+            }
+        }
+        if (attackCooldown < -attackReset)
+        {
+            attackSwitch = 0;
+        }
+    }
+
+    void AttackCalculation(float attackPower)
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, attackMask);
+        foreach (Collider2D hit in hits)
+        {
+            if (hit != null)
+            {
+                CutTree tree = hit.GetComponent<CutTree>();
                 if(tree != null)
                 {
                     tree.TreeFalling();
                 }
+                Enemy enemy = hit.GetComponent<Enemy>();
+                if(enemy != null)
+                {
+                    enemy.ChangeHealth(-attackPower);
+                }
             }
+        }
+    }
+    
+    void OnDrawGizmos()
+    {
+        if (attackPoint == null)
+            return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    void LaunchAxe()
+    {
+        if (throwCooldown < 0)
+        {
+            GameObject projectileObject = ThrowingAxePool.SharedInstance.GetPooledObject();  //Instantiate(projectilePrefab, rb2D.position + Vector2.up * 0.5f, Quaternion.identity);
+            if (projectileObject != null)
+            {
+                projectileObject.transform.position = rb2D.position + Vector2.up * 0.5f;
+                projectileObject.transform.rotation = Quaternion.identity;
+                projectileObject.SetActive(true);
+            }
+            ThrowingAxe projectile = projectileObject.GetComponent<ThrowingAxe>();
+            projectile.Throw(new Vector2(lookDirection.x,1f), throwingStrength);
+            throwCooldown = throwCooldownTime;
         }
     }
 
@@ -254,7 +390,7 @@ public class PlayerController : MonoBehaviour
 
     //Methods regarding Health
 
-    public void ChangeHealth(int amount)
+    public void ChangeHealth(float amount)
     {
         if (amount < 0)
         {
@@ -265,9 +401,11 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Hurt");
             isInvinsible = true;
             invinsibleTimer = timeInvincible;
+            isDeath();
         }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);
+        UIHealthBar.instance.SetValue(currentHealth / maxHealth);
     }
 
     private void Invinsible()
@@ -280,5 +418,21 @@ public class PlayerController : MonoBehaviour
                 isInvinsible = false;
             }
         }
+    }
+
+    private void isDeath()
+    {
+        if (Mathf.Approximately(currentHealth, 0))
+        {
+            isDead = true;
+            animator.SetTrigger("Death");
+            playerInputActions.Player.Disable();
+            rb2D.simulated = false;
+        }
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
     }
 }
