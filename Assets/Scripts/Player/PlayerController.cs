@@ -142,15 +142,8 @@ public class PlayerController : MonoBehaviour
         rb2D.velocity = new Vector2(moveInput.x, rb2D.velocity.y);
         rb2D.AddForce(moveInput * movementSpeed * (100 * Time.fixedDeltaTime), ForceMode2D.Force);
 
-        //Animation Stuff
-        if(rb2D.velocity.x > 0 || rb2D.velocity.x < 0)
-        {
-            animator.SetInteger("AnimState", 1);
-        }
-        else
-        {
-            animator.SetInteger("AnimState", 0);
-        }
+        animator.SetFloat("Speed", moveInput.x);
+
     }
 
     void OnInteract()
@@ -206,7 +199,7 @@ public class PlayerController : MonoBehaviour
         }
         
         animator.SetFloat("AirSpeedY", rb2D.velocity.y);
-        animator.SetBool("Grounded", isGrounded);
+        animator.SetBool("IsGrounded", isGrounded);
 
         //Jump higher if Jump is pressed longer
         if (playerInputActions.Player.Jump.WasReleasedThisFrame() && rb2D.velocity.y > 0)       //Same as GetButtonUp
@@ -401,9 +394,9 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Hurt");
             isInvinsible = true;
             invinsibleTimer = timeInvincible;
-            isDeath();
         }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        isDeath();
         Debug.Log(currentHealth + "/" + maxHealth);
         UIHealthBar.instance.SetValue(currentHealth / maxHealth);
     }
@@ -425,7 +418,7 @@ public class PlayerController : MonoBehaviour
         if (Mathf.Approximately(currentHealth, 0))
         {
             isDead = true;
-            animator.SetTrigger("Death");
+            animator.SetBool("IsDead", isDead);
             playerInputActions.Player.Disable();
             rb2D.simulated = false;
         }

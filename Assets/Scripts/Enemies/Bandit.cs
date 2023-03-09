@@ -64,12 +64,8 @@ public class Bandit : Enemy
     void OnTriggerEnter2D(Collider2D other)                                                       // Damage if hit by Bad Guy
     {
         PlayerController player = other.gameObject.GetComponent<PlayerController>();
-
-        if (player != null)
-        {
-            player.ChangeHealth(-damage);
-            Debug.Log("Collided with " + player.name);
-        }
+        player?.ChangeHealth(-damage);
+        Debug.Log("Collided with " + player.name);
     }
 
     public override void ChangeHealth(float amount)
