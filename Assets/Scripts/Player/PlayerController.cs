@@ -296,12 +296,13 @@ public class PlayerController : MonoBehaviour
             GameObject projectileObject = ThrowingAxePool.SharedInstance.GetPooledObject();  //Instantiate(projectilePrefab, rb2D.position + Vector2.up * 0.5f, Quaternion.identity);
             if (projectileObject != null)
             {
-                projectileObject.transform.position = rb2D.position + Vector2.up * 0.5f;
+                projectileObject.transform.position = rb2D.position + Vector2.up * 0.7f;
                 projectileObject.transform.rotation = Quaternion.identity;
                 projectileObject.SetActive(true);
             }
             ThrowingAxe projectile = projectileObject.GetComponent<ThrowingAxe>();
             projectile.Throw(new Vector2(lookDirection.x,1f), throwingStrength);
+            animator.SetTrigger("Throw");
             throwCooldown = throwCooldownTime;
         }
     }

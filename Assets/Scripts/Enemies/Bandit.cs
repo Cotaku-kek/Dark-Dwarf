@@ -65,7 +65,6 @@ public class Bandit : Enemy
     {
         PlayerController player = other.gameObject.GetComponent<PlayerController>();
         player?.ChangeHealth(-damage);
-        Debug.Log("Collided with " + player.name);
     }
 
     public override void ChangeHealth(float amount)
